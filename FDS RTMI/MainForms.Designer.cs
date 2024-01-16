@@ -40,6 +40,7 @@
             this.panel_logo = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel_homeHeadline = new System.Windows.Forms.Panel();
+            this.button_logout = new System.Windows.Forms.Button();
             this.label_Welcome = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label_homeBusGarage = new System.Windows.Forms.Label();
@@ -49,7 +50,6 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.panel_Home = new System.Windows.Forms.Panel();
             this.panel_cover = new System.Windows.Forms.Panel();
-            this.button_logout = new System.Windows.Forms.Button();
             panel_homeHeader = new System.Windows.Forms.Panel();
             panel_homeHeader.SuspendLayout();
             this.panel_side.SuspendLayout();
@@ -222,6 +222,18 @@
             this.panel_homeHeadline.Size = new System.Drawing.Size(934, 75);
             this.panel_homeHeadline.TabIndex = 2;
             // 
+            // button_logout
+            // 
+            this.button_logout.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button_logout.Font = new System.Drawing.Font("Roboto", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_logout.Location = new System.Drawing.Point(847, 29);
+            this.button_logout.Name = "button_logout";
+            this.button_logout.Size = new System.Drawing.Size(75, 23);
+            this.button_logout.TabIndex = 4;
+            this.button_logout.Text = "Logout";
+            this.button_logout.UseVisualStyleBackColor = true;
+            this.button_logout.Click += new System.EventHandler(this.button_logout_Click);
+            // 
             // label_Welcome
             // 
             this.label_Welcome.Dock = System.Windows.Forms.DockStyle.Left;
@@ -320,17 +332,6 @@
             this.panel_cover.Size = new System.Drawing.Size(934, 611);
             this.panel_cover.TabIndex = 5;
             // 
-            // button_logout
-            // 
-            this.button_logout.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_logout.Location = new System.Drawing.Point(847, 29);
-            this.button_logout.Name = "button_logout";
-            this.button_logout.Size = new System.Drawing.Size(75, 23);
-            this.button_logout.TabIndex = 4;
-            this.button_logout.Text = "Logout";
-            this.button_logout.UseVisualStyleBackColor = true;
-            this.button_logout.Click += new System.EventHandler(this.button_logout_Click);
-            // 
             // MainForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -340,6 +341,7 @@
             this.Controls.Add(this.panel_side);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForms";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RTMI";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForms_FormClosed);
             this.Load += new System.EventHandler(this.MainForms_Load);

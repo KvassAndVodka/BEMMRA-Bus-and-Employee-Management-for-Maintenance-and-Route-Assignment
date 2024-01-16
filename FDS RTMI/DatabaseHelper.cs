@@ -11,6 +11,8 @@ public class DatabaseHelper
         conn = new NpgsqlConnection(connectionString);
     }
 
+    public ConnectionState ConnectionState => conn.State;
+
     public DataTable GetData(string sql)
     {
         DataTable dt = new DataTable();
@@ -41,7 +43,7 @@ public class DatabaseHelper
         }
     }
 
-    private void ConnectionOpen()
+    public void ConnectionOpen()
     {
         if (conn.State == ConnectionState.Closed)
         {

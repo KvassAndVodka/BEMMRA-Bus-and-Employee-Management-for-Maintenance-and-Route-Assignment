@@ -6,19 +6,22 @@ namespace FDS_RTMI
 {
     public partial class MainForms : Form
     {
-        private string userRole;
+
+        private string username;
+        private string password;
         private DatabaseHelper db;
         private bool logoutRequested = false;
 
 
-        public MainForms(string userRole)
+        public MainForms(string username, string password)
         {
             InitializeComponent();
-            this.userRole = userRole;
+            this.username = username;
+            this.password = password;
             UpdateUIForUserRole();
 
             // Instantiate the DatabaseHelper
-            db = new DatabaseHelper("Server=localhost; port=5432; user id=postgres; password=bunbun; database=RTMI");
+            db = new DatabaseHelper($"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI");
 
             // Subscribe to the FormClosed event
             this.FormClosed += MainForms_FormClosed;
@@ -26,27 +29,31 @@ namespace FDS_RTMI
 
         private void UpdateUIForUserRole()
         {
-            switch (userRole)
+            switch (username)
             {
-                case "ADMIN":
+                case "admin":
                     // All buttons should be accessible
                     break;
 
-                case "MAINTENANCE MANAGER":
+                case "mtcmanager":
                     // Disable or hide buttons not allowed for Maintenance Manager
                     button_buses.Enabled = false;
                     button_routes.Enabled = false;
                     button_buses.Visible = false;
                     button_routes.Visible = false;
-                    break;
-
-                case "OPERATIONS MANAGER":
-                    // Disable or hide buttons not allowed for Operations Manager
                     button_employee.Enabled = false;
                     button_employee.Visible = false;
                     break;
 
-                case "HR MANAGER":
+                case "opmanager":
+                    // Disable or hide buttons not allowed for Operations Manager
+                    button_employee.Enabled = false;
+                    button_employee.Visible = false;
+                    button_maintenance.Enabled = false;
+                    button_maintenance.Visible = false;
+                    break;
+
+                case "hrmanager":
                     // Disable or hide buttons not allowed for HR Manager
                     button_buses.Enabled = false;
                     button_buses.Visible = false;
@@ -58,11 +65,13 @@ namespace FDS_RTMI
 
                 default:
                     // Default case, handle accordingly
+
+                    Console.WriteLine(username.ToString());
                     break;
             }
         }
 
-        string vstrConnection = "Server=localhost; port=5432; user id=postgres; password=bunbun; database=RTMI ;";
+
         NpgsqlConnection vCon;
 
         private int CountBusesInStatus(params string[] statuses)
@@ -86,6 +95,7 @@ namespace FDS_RTMI
 
         private void connection()
         {
+            string vstrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI ;";
             vCon = new NpgsqlConnection();
             vCon.ConnectionString = vstrConnection;
             vCon.Open();
@@ -101,16 +111,7 @@ namespace FDS_RTMI
         }
 
 
-        private void showSubmenu(Panel submenu)
-        {
-            if (submenu.Visible == false)
-            {
-                submenu.Visible = true;
-            }
 
-            else
-                submenu.Visible = false;
-        }
         private void button_home_Click(object sender, EventArgs e)
         {
             if (activeForm != null)
@@ -120,25 +121,25 @@ namespace FDS_RTMI
 
         private void button_employee_Click(object sender, EventArgs e)
         {
-            openChildForm(new ManageEmployee());
+            openChildForm(new ManageEmployee(username, password));
         }
 
 
         private void button_buses_Click(object sender, EventArgs e)
         {
-            openChildForm(new Bus());
+            openChildForm(new Bus(username, password));
         }
 
 
         private void button_maintenance_Click(object sender, EventArgs e)
         {
-            openChildForm(new Maintenance());
+            openChildForm(new Maintenance(username, password));
         }
 
 
         private void button_routes_Click(object sender, EventArgs e)
         {
-            openChildForm(new Routes());
+            openChildForm(new Routes(username, password));
         }
 
 

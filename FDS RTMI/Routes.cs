@@ -9,14 +9,19 @@ namespace FDS_RTMI
 {
     public partial class Routes : Form
     {
-        private string vStrConnection = "Server=localhost; port=5432; user id=postgres; password=bunbun; database=RTMI;";
+        private string username;
+        private string password;
+
         private DatabaseHelper db;
 
 
 
-        public Routes()
+        public Routes(string username, string password)
         {
             InitializeComponent();
+            this.username = username;
+            this.password = password;
+
             comboBox_Route.SelectedIndexChanged += new EventHandler(comboBox_Route_SelectedIndexChanged);
             comboBox_routeBusModel.SelectedIndexChanged += new EventHandler(comboBox_routeBusModel_SelectedIndexChanged);
         }
@@ -47,6 +52,7 @@ namespace FDS_RTMI
 
         private void Routes_Load(object sender, EventArgs e)
         {
+            string vStrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI;";
             db = new DatabaseHelper(vStrConnection);
             DataTable dtgetdata = new DataTable();
 
@@ -253,31 +259,41 @@ namespace FDS_RTMI
                 // Assuming the RouteID is stored in the first column of the DataGridView
                 int id = Convert.ToInt32(dataGrid_Routes.SelectedRows[0].Cells["RouteID"].Value);
 
-                // Construct the SQL UPDATE command
-                string sql = $"UPDATE ROUTE SET " +
-                             $"RouteName = '{comboBox_Route.Text}', " +
-                             $"BusID = {comboBox_routeBusID.Text}, " +
-                             $"AssignedDriver = '{selectedDriverId}' , " +
-                             $"AssignedConductor = '{selectedConductorID}' , " +
-                             $"RouteStatus = '{comboBox_routeStatus.Text}', " +
-                             $"RouteSchedule = '{dateTimePicker_routeDate.Value.ToString("yyyy-MM-dd HH:mm:ss")}' " +
-                             $"WHERE RouteID = {id}";
-
-
-                // Execute the SQL command
-                int rowsAffected = db.ExecuteNonQuery(sql);
-
-                if (rowsAffected > 0)
+                // Check if fields are empty
+                if (!string.IsNullOrEmpty(comboBox_Route.Text) && !string.IsNullOrEmpty(comboBox_routeBusID.Text) &&
+                    !string.IsNullOrEmpty(comboBox_routeStatus.Text) && comboBox_routeDriver.SelectedItem != null &&
+                    comboBox_routeConductor.SelectedItem != null)
                 {
-                    // Refresh the DataGridView
-                    Refresh_Table();
+                    // Construct the SQL UPDATE command
+                    string sql = $"UPDATE ROUTE SET " +
+                                $"RouteName = '{comboBox_Route.Text}', " +
+                                $"BusID = {comboBox_routeBusID.Text}, " +
+                                $"AssignedDriver = '{selectedDriverId}' , " +
+                                $"AssignedConductor = '{selectedConductorID}' , " +
+                                $"RouteStatus = '{comboBox_routeStatus.Text}', " +
+                                $"RouteSchedule = '{dateTimePicker_routeDate.Value.ToString("yyyy-MM-dd HH:mm:ss")}' " +
+                                $"WHERE RouteID = {id}";
+
+                    // Execute the SQL command
+                    int rowsAffected = db.ExecuteNonQuery(sql);
+
+                    if (rowsAffected > 0)
+                    {
+                        // Refresh the DataGridView
+                        Refresh_Table();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to update the route. Please try again.");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Failed to update the route. Please try again.");
+                    MessageBox.Show("One or more fields are empty. Please fill them out before updating.");
                 }
             }
         }
+
 
 
         private void button_routesDelete_Click(object sender, EventArgs e)

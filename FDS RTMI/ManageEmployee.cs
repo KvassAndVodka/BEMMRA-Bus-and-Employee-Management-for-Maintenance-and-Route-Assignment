@@ -7,16 +7,21 @@ namespace FDS_RTMI
 {
     public partial class ManageEmployee : Form
     {
-        private string vStrConnection = "Server=localhost; port=5432; user id=postgres; password=bunbun; database=RTMI;";
+        private string username;
+        private string password;
+
         private DatabaseHelper db;
 
-        public ManageEmployee()
+        public ManageEmployee(string username, string password)
         {
             InitializeComponent();
+            this.username = username;
+            this.password = password;
         }
 
         private void AddEmployee_Load(object sender, EventArgs e)
         {
+            string vStrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI;";
             db = new DatabaseHelper(vStrConnection);
             DataTable dtgetdata = new DataTable();
 
