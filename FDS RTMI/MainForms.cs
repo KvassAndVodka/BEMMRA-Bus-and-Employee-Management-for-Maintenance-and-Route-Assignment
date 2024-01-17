@@ -9,13 +9,20 @@ namespace FDS_RTMI
 
         private string username;
         private string password;
-        private DatabaseHelper db;
         private bool logoutRequested = false;
+        private Form activeForm = null;
+        private DatabaseHelper db;
+
+        NpgsqlConnection vCon;
+
+
 
 
         public MainForms(string username, string password)
         {
             InitializeComponent();
+            
+            // Retrieve user credentials for db connection and winForms management.
             this.username = username;
             this.password = password;
             UpdateUIForUserRole();
@@ -27,6 +34,9 @@ namespace FDS_RTMI
             this.FormClosed += MainForms_FormClosed;
         }
 
+        
+
+        // Function to show the windows that the user is only allowed to have an access
         private void UpdateUIForUserRole()
         {
             switch (username)
@@ -65,15 +75,14 @@ namespace FDS_RTMI
 
                 default:
                     // Default case, handle accordingly
-
                     Console.WriteLine(username.ToString());
                     break;
             }
         }
 
 
-        NpgsqlConnection vCon;
 
+        // Function for counting buses in home panel
         private int CountBusesInStatus(params string[] statuses)
         {
             int total = 0;
@@ -93,6 +102,8 @@ namespace FDS_RTMI
         }
 
 
+
+        // Function for establishing connection to the database
         private void connection()
         {
             string vstrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI ;";
@@ -100,9 +111,14 @@ namespace FDS_RTMI
             vCon.ConnectionString = vstrConnection;
             vCon.Open();
         }
+        
+
+
+        // Load MainForms
         private void MainForms_Load(object sender, EventArgs e)
         {
             connection();
+            label_Welcome.Text = $"Welcome, {username}!";
             label_homeBusTotal.Text = "Total Number of Buses: " + CountBusesInStatus("In Garage", "Operational", "Maintenance").ToString();
             label_homeBusOperational.Text = "Operational: " + CountBusesInStatus("Operational").ToString();
             label_homeBusMaintenance.Text = "Maintenance: " + CountBusesInStatus("Maintenance").ToString();
@@ -112,6 +128,7 @@ namespace FDS_RTMI
 
 
 
+        // Show Home Panel when opening the application and or clicking home button
         private void button_home_Click(object sender, EventArgs e)
         {
             if (activeForm != null)
@@ -119,31 +136,41 @@ namespace FDS_RTMI
             panel_Home.Controls.Add(panel_cover);
         }
 
+
+
+        // Show ManageEmployee.cs when pressing employee button
         private void button_employee_Click(object sender, EventArgs e)
         {
             openChildForm(new ManageEmployee(username, password));
         }
 
 
+
+        // Show Bus.cs when pressing buses button
         private void button_buses_Click(object sender, EventArgs e)
         {
             openChildForm(new Bus(username, password));
         }
 
 
+
+        // Show Maintenance.cs when pressing maintenance button
         private void button_maintenance_Click(object sender, EventArgs e)
         {
             openChildForm(new Maintenance(username, password));
         }
 
 
+
+        // Show Routes.cs when pressing routes button
         private void button_routes_Click(object sender, EventArgs e)
         {
             openChildForm(new Routes(username, password));
         }
+        
 
-
-        private Form activeForm = null;
+        
+        // Function for opening new winforms
         private void openChildForm(Form childForm)
         {
             if (activeForm != null)
@@ -158,6 +185,9 @@ namespace FDS_RTMI
             childForm.Show();
         }
 
+
+
+        // Close database connection when the application is closed.
         private void MainForms_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Close the database connection
@@ -170,6 +200,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Logout functionality
         private void button_logout_Click(object sender, EventArgs e)
         {
             // Set the flag to indicate logout

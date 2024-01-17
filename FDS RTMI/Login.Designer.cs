@@ -33,7 +33,7 @@
             this.textBox_password = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button_login = new System.Windows.Forms.Button();
             this.label_ForgotPassword = new System.Windows.Forms.Label();
             this.panel_login = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -80,18 +80,18 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Password:";
             // 
-            // button1
+            // button_login
             // 
-            this.button1.BackColor = System.Drawing.Color.White;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Roboto Medium", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(159, 254);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(192, 37);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Login";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button_login.BackColor = System.Drawing.Color.White;
+            this.button_login.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_login.Font = new System.Drawing.Font("Roboto Medium", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_login.Location = new System.Drawing.Point(159, 254);
+            this.button_login.Name = "button_login";
+            this.button_login.Size = new System.Drawing.Size(192, 37);
+            this.button_login.TabIndex = 4;
+            this.button_login.Text = "Login";
+            this.button_login.UseVisualStyleBackColor = false;
+            this.button_login.Click += new System.EventHandler(this.button_login_Click);
             // 
             // label_ForgotPassword
             // 
@@ -111,7 +111,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_login.BackColor = System.Drawing.Color.WhiteSmoke;
             this.panel_login.Controls.Add(this.pictureBox1);
-            this.panel_login.Controls.Add(this.button1);
+            this.panel_login.Controls.Add(this.button_login);
             this.panel_login.Location = new System.Drawing.Point(145, 51);
             this.panel_login.Name = "panel_login";
             this.panel_login.Size = new System.Drawing.Size(485, 325);
@@ -159,7 +159,7 @@
         private System.Windows.Forms.TextBox textBox_password;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button_login;
         private System.Windows.Forms.Label label_ForgotPassword;
         private System.Windows.Forms.Panel panel_login;
         private System.Windows.Forms.PictureBox pictureBox1;

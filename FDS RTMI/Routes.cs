@@ -11,8 +11,29 @@ namespace FDS_RTMI
     {
         private string username;
         private string password;
-
         private DatabaseHelper db;
+
+
+
+        // Dictionary for routes and respective bus models
+        private Dictionary<string, List<string>> routeToBusModels = new Dictionary<string, List<string>>()
+        {
+            { "Cagayan de Oro – Davao", new List<string> { "King Long XMQ6129Y5", "King Long XMQ6125AY", "King Long XMQ6128AYW", "King Long XMQ6128AYWO", "Viking 11", "Yutong ZK6127HA" } },
+            { "Cagayan de Oro – Maramag", new List<string> { "Yutong ZK6127HA" } },
+            { "Cagayan de Oro – Kibawe", new List<string> { "Viking 10", "Viking 11", "Yutong ZK6119HYG" } },
+            { "Cagayan de Oro – Damulog", new List<string> { "Viking 10", "Viking 11", "Yutong ZK6119HYG" } },
+            { "Cagayan de Oro – Kadingilan", new List<string> { "Viking 11" } },
+            { "Cagayan de Oro – Tacurong", new List<string> { "Viking 11", "Yutong ZK6119HYG" } },
+            { "Cagayan de Oro – General Santos", new List<string> { "Viking 11", "Yutong ZK6127HA" } },
+            { "Cagayan de Oro – Balingasag", new List<string> { "Yutong ZK6858H9" } },
+            { "Cagayan de Oro – Balingoan", new List<string> { "FB4J" } },
+            { "Valencia – Kibawe", new List<string> { "FB4J" } },
+            { "Valencia – Kadingilan", new List<string> { "FB4J" } },
+            { "Valencia – Wao", new List<string> { "FB4J" } },
+            { "Malaybalay – Kibawe", new List<string> { "FB4J" } },
+            { "Malaybalay – Kalilangan", new List<string> { "FB4J" } }
+        };
+
 
 
 
@@ -24,11 +45,15 @@ namespace FDS_RTMI
 
             comboBox_Route.SelectedIndexChanged += new EventHandler(comboBox_Route_SelectedIndexChanged);
             comboBox_routeBusModel.SelectedIndexChanged += new EventHandler(comboBox_routeBusModel_SelectedIndexChanged);
+            comboBox_routeBusID.SelectedIndexChanged += new EventHandler(comboBox_routeBusID_SelectedIndexChanged);
         }
 
 
+
+        // Obviously
         private void Refresh_Table()
         {
+            // In this query, to make it simpler for the OpMan, it shows the name instead of empID, so I join EMPLOYEE with ROUTE with some conditions
             string query = @"
                 SELECT
                     R.RouteID,
@@ -50,12 +75,17 @@ namespace FDS_RTMI
             dataGrid_Routes.DataSource = dtGetdata;
         }
 
+
+
+        // When open routes.cs, do this
         private void Routes_Load(object sender, EventArgs e)
         {
+            // AAAAAAAAAAAA, yes connect db
             string vStrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI;";
             db = new DatabaseHelper(vStrConnection);
             DataTable dtgetdata = new DataTable();
 
+            // initial load sa data, same thing sa query sa Refresh_Table()
             string query = @"
                 SELECT
                     R.RouteID,
@@ -73,22 +103,23 @@ namespace FDS_RTMI
                     EMPLOYEE EC ON R.AssignedConductor = EC.EmployeeID
             ";
 
+            // show table
             dtgetdata = db.GetData(query);
-
             dataGrid_Routes.DataSource = dtgetdata;
-
             dataGrid_Routes.Sort(dataGrid_Routes.Columns["RouteID"], ListSortDirection.Ascending);
 
-
+            // Load routetobus dict then populate
             comboBox_Route.DataSource = routeToBusModels.Keys.ToList();
             comboBox_Route.DisplayMember = "Key";
 
+            // retrieve driver names then populate the combo box
             string driverQuery = "SELECT EmployeeID, CONCAT(FirstName, ' ', LastName) AS FullName FROM EMPLOYEE WHERE EmployeeRole = 'Driver'";
             DataTable dtDrivers = db.GetData(driverQuery);
             comboBox_routeDriver.DisplayMember = "FullName";
             comboBox_routeDriver.ValueMember = "EmployeeID";
             comboBox_routeDriver.DataSource = dtDrivers;
 
+            // retrieve conductor names then populate the combo box
             string conductorQuery = "SELECT EmployeeID, CONCAT(FirstName, ' ', LastName) AS FullName FROM EMPLOYEE WHERE EmployeeRole = 'Conductor'";
             DataTable dtConductors = db.GetData(conductorQuery);
             comboBox_routeConductor.DisplayMember = "FullName";
@@ -96,6 +127,9 @@ namespace FDS_RTMI
             comboBox_routeConductor.DataSource = dtConductors;
         }
 
+
+
+        // same function, check empty fields
         bool verify()
         {
             if (string.IsNullOrEmpty(comboBox_Route.Text) ||
@@ -114,6 +148,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // usual, clear fields lmao
         private void ClearFields()
         {
             foreach (Control ctrl in this.Controls)
@@ -138,6 +175,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        //  Retrieve bus ids with that bus model
         private string GetBusModelByBusID(int busID)
         {
             string query = $"SELECT BusModel FROM BUS WHERE BusID = {busID}";
@@ -154,6 +194,8 @@ namespace FDS_RTMI
         }
 
 
+
+        // Usual row data to entry fields
         private void dataGrid_Routes_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
@@ -178,6 +220,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Check if there is data change in combobox
         private void comboBox_Route_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
@@ -202,27 +247,8 @@ namespace FDS_RTMI
         }
 
 
-        private Dictionary<string, List<string>> routeToBusModels = new Dictionary<string, List<string>>()
-        {
-            { "Cagayan de Oro – Davao", new List<string> { "King Long XMQ6129Y5", "King Long XMQ6125AY", "King Long XMQ6128AYW", "King Long XMQ6128AYWO", "Viking 11", "Yutong ZK6127HA" } },
-            { "Cagayan de Oro – Maramag", new List<string> { "Yutong ZK6127HA" } },
-            { "Cagayan de Oro – Kibawe", new List<string> { "Viking 10", "Viking 11", "Yutong ZK6119HYG" } },
-            { "Cagayan de Oro – Damulog", new List<string> { "Viking 10", "Viking 11", "Yutong ZK6119HYG" } },
-            { "Cagayan de Oro – Kadingilan", new List<string> { "Viking 11" } },
-            { "Cagayan de Oro – Tacurong", new List<string> { "Viking 11", "Yutong ZK6119HYG" } },
-            { "Cagayan de Oro – General Santos", new List<string> { "Viking 11", "Yutong ZK6127HA" } },
-            { "Cagayan de Oro – Balingasag", new List<string> { "Yutong ZK6858H9" } },
-            { "Cagayan de Oro – Balingoan", new List<string> { "FB4J" } },
-            { "Valencia – Kibawe", new List<string> { "FB4J" } },
-            { "Valencia – Kadingilan", new List<string> { "FB4J" } },
-            { "Valencia – Wao", new List<string> { "FB4J" } },
-            { "Malaybalay – Kibawe", new List<string> { "FB4J" } },
-            { "Malaybalay – Kalilangan", new List<string> { "FB4J" } }
-        };
-
-
-
-
+      
+        // Check if there is data change in combobox
         private void comboBox_routeBusModel_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboBox_routeBusModel.SelectedValue != null)
@@ -230,9 +256,9 @@ namespace FDS_RTMI
                 string busModel = comboBox_routeBusModel.SelectedValue.ToString();
 
                 string query = $@"
-               SELECT BusID
-               FROM BUS
-               WHERE BusModel = '{busModel}' AND BusStatus IN ('Operational', 'In Garage');";
+                               SELECT BusID
+                               FROM BUS
+                               WHERE BusModel = '{busModel}' AND BusStatus IN ('Operational', 'In Garage');";
 
                 DataTable dtBusIDs = db.GetData(query);
 
@@ -243,6 +269,48 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Check if there is data change in combobox
+        private void comboBox_routeBusID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox_routeBusID.SelectedValue != null)
+            {
+                string busID = comboBox_routeBusID.SelectedValue.ToString();
+
+                // Retrieve the last maintenance date
+                string query = $"SELECT MAX(MaintenanceDate) FROM MAINTENANCE WHERE BusID = {busID}";
+                DataTable dtLastMaintenance = db.GetData(query);
+                DateTime lastMaintenanceDate;
+                if (dtLastMaintenance.Rows.Count > 0)
+                {
+                    string dateStr = dtLastMaintenance.Rows[0]["MAX"].ToString();
+                    if (!DateTime.TryParse(dateStr, out lastMaintenanceDate))
+                    {
+                        // Handle the case where the date string could not be parsed
+                        label_lastMaintenance.Text = "Last Maintenance: Too long ago!";
+                        return;
+                    }
+                }
+                else
+                {
+                    // Handle case where no maintenance records exist for the busID
+                    label_lastMaintenance.Text = "No maintenance records available.";
+                    return;
+                }
+
+                // Calculate the difference in days
+                TimeSpan timeSpan = DateTime.Now - lastMaintenanceDate;
+                int daysSinceLastMaintenance = timeSpan.Days;
+
+                // Display the result
+                label_lastMaintenance.Text = $"Last maintenance was {daysSinceLastMaintenance} days ago.";
+            }
+        }
+
+
+
+        // Update row details
         private void button_routesUpdate_Click(object sender, EventArgs e)
         {
             if (dataGrid_Routes.SelectedCells.Count > 0)
@@ -296,6 +364,7 @@ namespace FDS_RTMI
 
 
 
+        // delete row data
         private void button_routesDelete_Click(object sender, EventArgs e)
         {
             if (dataGrid_Routes.SelectedCells.Count > 0)
@@ -325,6 +394,8 @@ namespace FDS_RTMI
         }
 
 
+
+        // add row data
         private void button_routesAdd_Click(object sender, EventArgs e)
         {
             if (!verify())
@@ -363,6 +434,6 @@ namespace FDS_RTMI
             }
         }
 
-
+        
     }
 }

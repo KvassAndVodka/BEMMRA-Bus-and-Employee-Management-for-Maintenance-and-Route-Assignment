@@ -59,6 +59,15 @@ public class DatabaseHelper
         }
     }
 
+    public void CloseConnection()
+    {
+        if (conn != null && conn.State == ConnectionState.Open)
+        {
+            conn.Close();
+        }
+    }
+
+    // Routes.cs function
     public string GetRouteNameByBusID(int busID)
     {
         string sql = $"SELECT RouteName FROM ROUTE WHERE BusID = {busID}";
@@ -70,14 +79,6 @@ public class DatabaseHelper
         else
         {
             return "No route assigned";
-        }
-    }
-
-    public void CloseConnection()
-    {
-        if (conn != null && conn.State == ConnectionState.Open)
-        {
-            conn.Close();
         }
     }
 }

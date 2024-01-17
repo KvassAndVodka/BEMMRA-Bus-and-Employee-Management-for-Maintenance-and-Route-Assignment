@@ -12,28 +12,36 @@ namespace FDS_RTMI
 
         private DatabaseHelper db;
 
+
+
         public ManageEmployee(string username, string password)
         {
             InitializeComponent();
+            
+            // Grab Credentials
             this.username = username;
             this.password = password;
         }
 
+
+
+        // WinForms load processes
         private void AddEmployee_Load(object sender, EventArgs e)
         {
+            // Database query, and connection 
             string vStrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI;";
             db = new DatabaseHelper(vStrConnection);
+            
+            // Load Employee Data
             DataTable dtgetdata = new DataTable();
-
             dtgetdata = db.GetData("SELECT * FROM EMPLOYEE ORDER BY EmployeeID ASC");
-
             dataGrid_AddEmployee.DataSource = dtgetdata;
-
-            // Sort the DataGridView by EmployeeID
             dataGrid_AddEmployee.Sort(dataGrid_AddEmployee.Columns["EmployeeID"], ListSortDirection.Ascending);
         }
 
 
+
+        // Veryify if all fields are filled up
         bool verify()
         {
             if (string.IsNullOrWhiteSpace(textBox_firstName.Text) ||
@@ -51,6 +59,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Clear all fields
         private void ClearFields()
         {
             foreach (Control ctrl in this.Controls)
@@ -77,7 +88,6 @@ namespace FDS_RTMI
                     DateTimePicker dtp = (DateTimePicker)ctrl;
                     if (dtp != null)
                     {
-                        // Set the DateTimePicker value to the current date and time
                         dtp.Value = DateTime.Now;
                     }
                 }
@@ -86,46 +96,60 @@ namespace FDS_RTMI
 
 
 
-
+        // Row click and data fillup function
         private void dataGrid_AddEmployee_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
+                // First Name
                 textBox_firstName.Text = dataGrid_AddEmployee.Rows[e.RowIndex].Cells["FirstName"].Value.ToString();
+                
+                // Last Name
                 textBox_lastName.Text = dataGrid_AddEmployee.Rows[e.RowIndex].Cells["LastName"].Value.ToString();
+                
+                // Address
                 textBox_employeeAddress.Text = dataGrid_AddEmployee.Rows[e.RowIndex].Cells["EmployeeAddress"].Value.ToString();
 
+                // Gender
                 comboBox_Gender.Text = dataGrid_AddEmployee.Rows[e.RowIndex].Cells["Gender"].Value.ToString();
+                
+                // Role
                 comboBox_employeeRole.Text = dataGrid_AddEmployee.Rows[e.RowIndex].Cells["EmployeeRole"].Value.ToString();
 
+                // Birthdate
                 dateTimePicker_birthdate.Value = Convert.ToDateTime(dataGrid_AddEmployee.Rows[e.RowIndex].Cells["Birthdate"].Value);
+                
+                // Date Employed
                 dateTimePicker_employmentDate.Value = Convert.ToDateTime(dataGrid_AddEmployee.Rows[e.RowIndex].Cells["EmploymentDate"].Value);
 
-                // Calculate the number of years employed
+                // Calculate and display years employed
                 DateTime employmentDate = Convert.ToDateTime(dataGrid_AddEmployee.Rows[e.RowIndex].Cells["EmploymentDate"].Value);
                 int yearsEmployed = DateTime.Now.Year - employmentDate.Year;
-
-                // Display the number of years employed
                 label_yearsEmployed.Text = "Years Employed:     " + yearsEmployed.ToString();
             }
         }
 
 
 
+        // Add employee
         private void button_EmployeeAdd_Click(object sender, EventArgs e)
         {
+            // Verify if fields are complete
             if (!verify())
             {
                 MessageBox.Show("Invalid input! Please fill in all required fields.");
                 return;
             }
 
+            // SQL Query for data insertion
             string sql = $"INSERT INTO EMPLOYEE (FirstName, LastName, EmployeeAddress, Gender, EmployeeRole, Birthdate, EmploymentDate) " +
                          $"VALUES ('{textBox_firstName.Text}', '{textBox_lastName.Text}', '{textBox_employeeAddress.Text}', " +
                          $"'{comboBox_Gender.SelectedItem.ToString()}', '{comboBox_employeeRole.SelectedItem.ToString()}', " +
                          $"'{dateTimePicker_birthdate.Value.ToString("yyyy-MM-dd")}', '{dateTimePicker_employmentDate.Value.ToString("yyyy-MM-dd")}')";
 
+            // Execute Query
             int rowsAffected = db.ExecuteNonQuery(sql);
+            
             if (rowsAffected > 0)
             {
                 // Fetch the data again from the database
@@ -143,6 +167,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Delete employee details
         private void button_EmployeeDelete_Click(object sender, EventArgs e)
         {
             // Check if a row is selected
@@ -178,6 +205,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Update Employee data
         private void button_EmployeeUpdate_Click(object sender, EventArgs e)
         {
             // Check if a row is selected

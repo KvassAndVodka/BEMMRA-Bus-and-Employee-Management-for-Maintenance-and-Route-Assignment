@@ -54,6 +54,7 @@
             this.dateTimePicker_routeDate = new System.Windows.Forms.DateTimePicker();
             this.comboBox_routeDriver = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.label_lastMaintenance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid_Routes)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -105,6 +106,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label_lastMaintenance);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.comboBox_routeBusID);
             this.panel1.Controls.Add(this.comboBox_routeStatus);
@@ -147,6 +149,7 @@
             this.comboBox_routeBusID.Name = "comboBox_routeBusID";
             this.comboBox_routeBusID.Size = new System.Drawing.Size(213, 27);
             this.comboBox_routeBusID.TabIndex = 30;
+            this.comboBox_routeBusID.SelectedIndexChanged += new System.EventHandler(this.comboBox_routeBusID_SelectedIndexChanged);
             // 
             // comboBox_routeStatus
             // 
@@ -155,7 +158,7 @@
             this.comboBox_routeStatus.Items.AddRange(new object[] {
             "Active",
             "Stopped"});
-            this.comboBox_routeStatus.Location = new System.Drawing.Point(116, 121);
+            this.comboBox_routeStatus.Location = new System.Drawing.Point(489, 124);
             this.comboBox_routeStatus.Name = "comboBox_routeStatus";
             this.comboBox_routeStatus.Size = new System.Drawing.Size(213, 27);
             this.comboBox_routeStatus.TabIndex = 28;
@@ -229,7 +232,7 @@
             // 
             this.label_routeStatus.AutoSize = true;
             this.label_routeStatus.Font = new System.Drawing.Font("Roboto", 12F, System.Drawing.FontStyle.Bold);
-            this.label_routeStatus.Location = new System.Drawing.Point(42, 124);
+            this.label_routeStatus.Location = new System.Drawing.Point(415, 127);
             this.label_routeStatus.Name = "label_routeStatus";
             this.label_routeStatus.Size = new System.Drawing.Size(60, 19);
             this.label_routeStatus.TabIndex = 22;
@@ -354,6 +357,16 @@
             this.label2.Text = "Manage Routes";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label_lastMaintenance
+            // 
+            this.label_lastMaintenance.AutoSize = true;
+            this.label_lastMaintenance.Font = new System.Drawing.Font("Roboto", 12F, System.Drawing.FontStyle.Bold);
+            this.label_lastMaintenance.Location = new System.Drawing.Point(42, 124);
+            this.label_lastMaintenance.Name = "label_lastMaintenance";
+            this.label_lastMaintenance.Size = new System.Drawing.Size(143, 19);
+            this.label_lastMaintenance.TabIndex = 31;
+            this.label_lastMaintenance.Text = "Last Maintenance:";
+            // 
             // Routes
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -396,5 +409,6 @@
         private System.Windows.Forms.ComboBox comboBox_routeStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox_routeBusID;
+        private System.Windows.Forms.Label label_lastMaintenance;
     }
 }

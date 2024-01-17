@@ -10,30 +10,42 @@ namespace FDS_RTMI
         private string username;
         private string password;
 
-
         private DatabaseHelper db;
+
+
 
         public Bus(string username, string password)
         {
             InitializeComponent();
+            
+            // Grab username and password
             this.username = username;
             this.password = password;
         }
 
+
+
+
+        // Processes on load
         private void Bus_Load(object sender, EventArgs e)
         {
+            // Connection String
             string vStrConnection = $"Server=localhost; port=5432; user id={username}; password={password}; database=RTMI;";
+            
+            // Connection handler
             db = new DatabaseHelper(vStrConnection);
             DataTable dtgetdata = new DataTable();
 
+            
+            // Query and displaying Bus table
             dtgetdata = db.GetData("SELECT * FROM BUS ORDER BY BusID ASC");
-
             dataGrid_Buses.DataSource = dtgetdata;
-
-            // Sort the DataGridView by BusID
             dataGrid_Buses.Sort(dataGrid_Buses.Columns["BusID"], ListSortDirection.Ascending);
         }
 
+
+
+        // Function to check if inputs are complete
         bool verify()
         {
             if (string.IsNullOrWhiteSpace(textBox_busesBusID.Text) ||
@@ -49,6 +61,9 @@ namespace FDS_RTMI
             }
         }
 
+
+
+        // Function to clear inputs
         private void ClearFields()
         {
             foreach (Control ctrl in this.Controls)
@@ -75,41 +90,49 @@ namespace FDS_RTMI
                     DateTimePicker dtp = (DateTimePicker)ctrl;
                     if (dtp != null)
                     {
-                        // Set the DateTimePicker value to the current date and time
                         dtp.Value = DateTime.Now;
                     }
                 }
             }
         }
 
+
+
+        // Function to load data from the row of the table to the input fields
         private void dataGrid_Buses_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
+                // Bus ID
                 textBox_busesBusID.Text = dataGrid_Buses.Rows[e.RowIndex].Cells["BusID"].Value.ToString();
+                
+                // Bus Model
                 textBox_busesBusModel.Text = dataGrid_Buses.Rows[e.RowIndex].Cells["BusModel"].Value.ToString();
 
+                // Date in Fleet
                 dateTimePicker_busesDateInFleet.Value = Convert.ToDateTime(dataGrid_Buses.Rows[e.RowIndex].Cells["DateInFleet"].Value);
 
-                // Clear the ComboBox selection
+                // Bus Status
                 comboBox_busesBusStatus.SelectedIndex = -1;
-                // Assign the new value
                 comboBox_busesBusStatus.Text = dataGrid_Buses.Rows[e.RowIndex].Cells["BusStatus"].Value.ToString();
 
-                // Calculate the number of years in fleet
+                // Calculate and display years in fleet
                 DateTime dateInFleet = Convert.ToDateTime(dataGrid_Buses.Rows[e.RowIndex].Cells["DateInFleet"].Value);
                 int yearsInFleet = DateTime.Now.Year - dateInFleet.Year;
-
-                // Display the number of years in fleet
                 label_busesYearsInFleet.Text = "Years In Fleet:     " + yearsInFleet.ToString();
 
+                // Bus Route
                 string routeName = db.GetRouteNameByBusID(Convert.ToInt32(dataGrid_Buses.Rows[e.RowIndex].Cells["BusID"].Value));
                 label_busesRoute.Text = "Route:     " + routeName;
             }
         }
 
+
+
+        // Update bus details
         private void button_busesUpdate_Click(object sender, EventArgs e)
         {
+            // Check if all inputs are filled
             if (dataGrid_Buses.SelectedRows.Count > 0)
             {
                 if (!verify())
@@ -119,11 +142,14 @@ namespace FDS_RTMI
                 }
             }
 
+            // Notes the bus id of the row of details that needs to be changed
             int id = Convert.ToInt32(dataGrid_Buses.SelectedRows[0].Cells["BusID"].Value);
-
+            
+            // Update query string for bus row
             string sql = $"UPDATE BUS SET BusID='{textBox_busesBusID.Text}', BusModel='{textBox_busesBusModel.Text}', dateInFleet='{dateTimePicker_busesDateInFleet.Value.ToString("yyyy-MM-dd")}', " +
                 $"BusStatus='{comboBox_busesBusStatus.SelectedItem.ToString()}' WHERE BusID={id}";
 
+            // Execute query
             int rowsAffected = db.ExecuteNonQuery(sql);
 
             if (rowsAffected > 0)
@@ -142,14 +168,19 @@ namespace FDS_RTMI
         }
 
 
+        
+        // Delete row function
         private void button_busesDelete_Click(object sender, EventArgs e)
         {
             if (dataGrid_Buses.SelectedRows.Count > 0)
             {
+                // Row selection and query
                 int id = Convert.ToInt32(dataGrid_Buses.SelectedRows[0].Cells["BusID"].Value);
                 string sql = $"DELETE FROM BUS WHERE BusID = {id}";
 
+                // Execute query
                 int rowsAffected = db.ExecuteNonQuery(sql);
+                
                 if (rowsAffected > 0)
                 {
                     DataTable dtgetdata = db.GetData("SELECT * FROM BUS");
@@ -170,20 +201,28 @@ namespace FDS_RTMI
 
         }
 
+
+
+        // Add bus function
         private void button_busesAdd_Click(object sender, EventArgs e)
         {
+            // Check if input is complete
             if (!verify())
             {
                 MessageBox.Show("Invalid input! Please fill in all required fields.");
                 return;
             }
 
+
+            // SQL Query for data insertion
             string sql = $"INSERT INTO BUS (BusID, BusModel, DateInFleet, BusStatus) " +
                          $"VALUES ('{textBox_busesBusID.Text}', '{textBox_busesBusModel.Text}', " +
                          $"'{dateTimePicker_busesDateInFleet.Value.ToString("yyyy-MM-dd")}', " +
                          $"'{comboBox_busesBusStatus.SelectedItem.ToString()}')";
 
+            // Execute Query
             int rowsAffected = db.ExecuteNonQuery(sql);
+            
             if (rowsAffected > 0)
             {
                 DataTable dtgetdata = db.GetData("SELECT * FROM BUS");
