@@ -46,7 +46,7 @@ namespace FDS_RTMI
                     break;
 
                 case "mtcmanager":
-                    // Disable or hide buttons not allowed for Maintenance Manager
+                    // Disable or hide butstons not allowed for Maintenance Manager
                     button_buses.Enabled = false;
                     button_routes.Enabled = false;
                     button_buses.Visible = false;

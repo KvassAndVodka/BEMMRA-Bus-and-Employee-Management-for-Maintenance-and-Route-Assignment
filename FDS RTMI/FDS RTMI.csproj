@@ -153,7 +153,6 @@
       <DependentUpon>Bus.cs</DependentUpon>
     </Compile>
     <Compile Include="DatabaseHelper.cs" />
-    <Compile Include="EmployeeClass.cs" />
     <Compile Include="MainForms.cs">
       <SubType>Form</SubType>
     </Compile>

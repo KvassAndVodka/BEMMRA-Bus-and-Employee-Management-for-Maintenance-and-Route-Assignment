@@ -348,6 +348,7 @@ namespace FDS_RTMI
                     if (rowsAffected > 0)
                     {
                         // Refresh the DataGridView
+                        MessageBox.Show("Route data has been succesfully updated.");
                         Refresh_Table();
                     }
                     else
@@ -384,6 +385,7 @@ namespace FDS_RTMI
                 if (rowsAffected > 0)
                 {
                     // Refresh the DataGridView
+                    MessageBox.Show("Route data has been successfully deleted.");
                     Refresh_Table();
                 }
                 else
@@ -432,8 +434,6 @@ namespace FDS_RTMI
             {
                 MessageBox.Show("Failed to add new route. Please try again.");
             }
-        }
-
-        
+        }   
     }
 }
